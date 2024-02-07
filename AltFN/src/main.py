@@ -45,7 +45,7 @@ class Config:
 
 
 # グローバル変数
-__version__ = "0.1.0.0"
+__version__ = "0.1.255.0"
 g_args = argparse.Namespace()  # コマンド引数。ダミー初期化
 
 
