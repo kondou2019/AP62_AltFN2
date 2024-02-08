@@ -1,16 +1,12 @@
-#!/usr/bin/env python
 """!
 @file main.py
-@brie アプリケーションランチャ
-@retval 0 - 成功
-@retval 1 - 失敗
 """
 import argparse
 import dataclasses
 import json
 import os
 import subprocess
-import sys
+
 import tkinter
 from dataclasses import dataclass, field
 from tkinter import messagebox, ttk
@@ -319,7 +315,3 @@ def main(argv: List[str]) -> int:
     win = MainWindow(config_path=args.config)
     win.mainloop()
     return 0
-
-
-if __name__ == "__main__":
-    sys.exit(main(sys.argv))
