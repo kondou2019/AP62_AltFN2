@@ -34,6 +34,7 @@ class Launch:
     program_path: str  # プログラムパス
     args: Optional[list[str]]  # オプション
     work_dir: Optional[str]  # 作業ディレクトリ
+    shell: bool = False  # プログラム起動にshellを追加
 
 
 @dataclass(kw_only=True)
@@ -124,7 +125,7 @@ class MainWindow(tkinter.Tk):
         # rc = subprocess.call(cmd, shell=True)
         try:
             # _process = subprocess.Popen(cmd, cwd=cwd, shell=True)
-            _process = subprocess.Popen(cmd, cwd=cwd)
+            _process = subprocess.Popen(cmd, cwd=cwd, shell=launch.shell)
         # except NotADirectoryError as e: # 実行パスが間違っている
         #    messagebox.showerror("エラー", f"パスが無効\nprogram_path={launch.program_path}")
         except Exception as e:
