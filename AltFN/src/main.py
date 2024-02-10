@@ -267,8 +267,12 @@ class MainWindow(tkinter.Tk):
         prefix = self.key_label["text"]
         matching_keys = [key for key in self.config_data.launch_dict.keys() if key.startswith(prefix)]
         self.update_launch_table(matching_keys)
-        if len(matching_keys) == 1:
+        if prefix in self.config_data.launch_dict: # 完全一致
+            self.launch_key = prefix
+        elif len(matching_keys) == 1: # 完全前方一致
             self.launch_key = matching_keys[0]
+        #
+        if self.launch_key != "":
             launch = self.config_data.launch_dict[self.launch_key]
             self.title_label["text"] = launch.title
 

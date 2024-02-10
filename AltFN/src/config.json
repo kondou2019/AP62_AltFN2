@@ -27,6 +27,11 @@
             "title": "Microsoft Edge",
             "work_dir": null
         },
+        "mw": {
+            "program_path": "C:\\Users\\kondou\\AppData\\Local\\Microsoft\\WindowsApps\\wt.exe",
+            "title": "Microsoft Windows Terminal",
+            "work_dir": null
+        },
         "mwtu": {
             "args": [
                 "-p",
