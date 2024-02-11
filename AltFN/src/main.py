@@ -134,7 +134,14 @@ class MainWindow(tkinter.Tk):
         #    messagebox.showerror("エラー", f"パスが無効\nprogram_path={launch.program_path}")
         except Exception as e:
             messagebox.showerror("エラー", f"その他エラー。\n詳細:{e}")
-        #
+            return False
+        # アプリケーションの起動後
+        if self.config_data.actions_after_launch is None or self.config_data.actions_after_launch == "minimize":
+            self.iconify()  # 最小化
+        elif self.config_data.actions_after_launch == "none":
+            pass
+        elif self.config_data.actions_after_launch == "exit":
+            self.destroy()
         return True
 
     def update_launch_table(self, matching_keys: list[str]):
@@ -255,19 +262,13 @@ class MainWindow(tkinter.Tk):
         elif e.keysym == "Return":
             if self.launch_key != "":
                 launch = self.config_data.launch_dict[self.launch_key]
-                self.exec_program(launch)
-                #
                 self.launch_key = ""
                 self.key_label["text"] = ""
                 self.title_label["text"] = ""
                 self.update_launch_table([])
-                # アプリケーションの起動後
-                if self.config_data.actions_after_launch is None or self.config_data.actions_after_launch == "minimize":
-                    self.iconify()  # 最小化
-                elif self.config_data.actions_after_launch == "none":
-                    pass
-                elif self.config_data.actions_after_launch == "exit":
-                    self.destroy()
+                #
+                self.exec_program(launch)
+                #
                 return
         elif e.char != "":  # 文字キーの入力
             self.key_label["text"] += e.keysym
