@@ -12,7 +12,15 @@ from dataclasses import dataclass, field
 from tkinter import messagebox, ttk
 from typing import List, Optional, Union
 
+import win32con
+import win32gui
 from dacite import from_dict
+
+# グローバル変数
+__version__ = "0.1.255.0"
+g_args = argparse.Namespace()  # コマンド引数。ダミー初期化
+
+#
 
 
 @dataclass(kw_only=True)
@@ -27,22 +35,18 @@ class WindowGeometry:
 class Launch:
     title: str = ""
     program_path: str  # プログラムパス
-    args: Optional[list[str]]  # オプション
+    args: Optional[list[str]]  # コマンドオプション
     work_dir: Optional[str]  # 作業ディレクトリ
-    shell: Optional[bool]  # プログラム起動にshellを追加
+    shell: Optional[bool]  # アプリケーションをシェルによって起動する
 
 
 @dataclass(kw_only=True)
 class Config:
-    version: str = ""
+    version: str = __version__
     main_window_geometry: WindowGeometry = field(default_factory=WindowGeometry)
-    launch_exit: bool = False  # プログラムを起動したあとに終了する
+    actions_after_launch: Optional[str] = None  # アプリケーションを起動したあとの処理
+    # "minimize":最小化,"exit":プログラム終了,"none":何もしない
     launch_dict: dict[str, Launch] = field(default_factory=dict)
-
-
-# グローバル変数
-__version__ = "0.1.255.0"
-g_args = argparse.Namespace()  # コマンド引数。ダミー初期化
 
 
 class MainWindow(tkinter.Tk):
@@ -257,9 +261,12 @@ class MainWindow(tkinter.Tk):
                 self.key_label["text"] = ""
                 self.title_label["text"] = ""
                 self.update_launch_table([])
-                #
-                # self.iconify() # 最小化
-                if self.config_data.launch_exit == True:
+                # アプリケーションの起動後
+                if self.config_data.actions_after_launch is None or self.config_data.actions_after_launch == "minimize":
+                    self.iconify()  # 最小化
+                elif self.config_data.actions_after_launch == "none":
+                    pass
+                elif self.config_data.actions_after_launch == "exit":
                     self.destroy()
                 return
         elif e.char != "":  # 文字キーの入力
@@ -327,6 +334,27 @@ def remove_none_keys(d: Union[dict, list[dict]]):
     return d
 
 
+find_hwnd: int = 0
+
+
+def callback_EnumWindows_window_text_suffix(hwnd, title_suffix) -> bool:
+    """!
+    @brief ウィンドハンドルを探す。テキストのサフィックス
+    @detail win32gui.EnumWindows()のコールバック関数。一致したhwndをfind_hwndにセット。
+    @param hwnd コマンドラインオプション
+    @param title_suffix 検索対象のサフィックス
+    @retval True 継続
+    @retval False 中断
+    """
+    name = win32gui.GetWindowText(hwnd)
+    if name.endswith(title_suffix):
+        print(f"{hwnd}:{name}")
+        global find_hwnd
+        find_hwnd = hwnd
+        # return False # 列挙終了。なんか落ちる
+    return True
+
+
 def main(argv: List[str]) -> int:
     """!
     @brief 主入口点
@@ -338,6 +366,12 @@ def main(argv: List[str]) -> int:
     args = analyze_option(argv)
     global g_args
     g_args = args
+    # 2重起動防止
+    win32gui.EnumWindows(callback_EnumWindows_window_text_suffix, " - AltFN")
+    if find_hwnd != 0:
+        win32gui.ShowWindow(find_hwnd, win32con.SW_NORMAL)
+        win32gui.SetForegroundWindow(find_hwnd)
+        return 0
     # ウィンドの表示
     win = MainWindow(config_path=args.config)
     win.mainloop()
