@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """!
-@file AltFN.py
+@file AltFN2.py
 @brie アプリケーションランチャ
 @retval 0 - 成功
 @retval 1 - 失敗

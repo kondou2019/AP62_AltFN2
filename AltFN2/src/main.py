@@ -157,8 +157,8 @@ class MainWindow(tkinter.Tk):
     # GUIイベント,Window #
     # ===================#
     def MainWindow_load(self):
-        # self.title("(無題) - AltFN")
-        self.title(f"{self.config_path} - AltFN")
+        # self.title("(無題) - AltFN2")
+        self.title(f"{self.config_path} - AltFN2")
         if self.config_data.main_window_geometry.width == 0 and self.config_data.main_window_geometry.height == 0:
             self.geometry("512x512")
         else:
@@ -228,7 +228,7 @@ class MainWindow(tkinter.Tk):
         self.destroy()
 
     def on_menu_help_about_click(self) -> None:
-        messagebox.showinfo("バージョン情報", f"AltFN {__version__}")
+        messagebox.showinfo("バージョン情報", f"AltFN2 {__version__}")
 
     def on_menu_tool_clipboard_json_click(self) -> None:
         s = self.clipboard_get()
@@ -297,7 +297,7 @@ def analyze_option(argv: List[str]) -> argparse.Namespace:
     @return argparse.namespace コマンドラインオプション解析結果
     """
     parser = argparse.ArgumentParser(
-        prog="AltFN",
+        prog="AltFN2",
         usage="アプリケーションランチャ",
         epilog="end",
         add_help=True,
@@ -369,7 +369,7 @@ def main(argv: List[str]) -> int:
     global g_args
     g_args = args
     # 2重起動防止
-    win32gui.EnumWindows(callback_EnumWindows_window_text_suffix, " - AltFN")
+    win32gui.EnumWindows(callback_EnumWindows_window_text_suffix, " - AltFN2")
     if find_hwnd != 0:
         win32gui.ShowWindow(find_hwnd, win32con.SW_NORMAL)
         win32gui.SetForegroundWindow(find_hwnd)

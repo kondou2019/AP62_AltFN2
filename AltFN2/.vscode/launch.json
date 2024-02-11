@@ -5,8 +5,8 @@
             "name": "Python main.py",
             "type": "debugpy",
             "request": "launch",
-            "program": "${workspaceFolder}/src/AltFN.py",
-            "args": ["--config", "D:\\tmp4\\AP62_AltFN\\AltFN\\src\\config.json"],
+            "program": "${workspaceFolder}/src/AltFN2.py",
+            "args": ["--config", "${workspaceFolder}/src/config.json"],
             "console": "integratedTerminal"
         }
     ]
