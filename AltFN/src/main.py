@@ -42,7 +42,7 @@ class Launch:
 
 @dataclass(kw_only=True)
 class Config:
-    version: str = __version__
+    version: str = ""
     main_window_geometry: WindowGeometry = field(default_factory=WindowGeometry)
     actions_after_launch: Optional[str] = None  # アプリケーションを起動したあとの処理
     # "minimize":最小化,"exit":プログラム終了,"none":何もしない
@@ -88,11 +88,12 @@ class MainWindow(tkinter.Tk):
         self.config_data = config
 
     def config_write(self):
+        self.config_data.version = __version__
+        # ウィンド位置の更新
         x = self.winfo_x()
         y = self.winfo_y()
         width = self.winfo_width()
         height = self.winfo_height()
-        # ウィンド位置の更新
         self.config_data.main_window_geometry.width = width
         self.config_data.main_window_geometry.height = height
         self.config_data.main_window_geometry.x = x
