@@ -6,6 +6,7 @@
 @retval 1 - 失敗
 """
 import sys
+
 from main import main
 
 if __name__ == "__main__":

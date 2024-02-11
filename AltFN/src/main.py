@@ -1,16 +1,16 @@
 """!
 @file main.py
 """
+
 import argparse
 import dataclasses
 import json
 import os
 import subprocess
-
 import tkinter
 from dataclasses import dataclass, field
 from tkinter import messagebox, ttk
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from dacite import from_dict
 
@@ -25,12 +25,11 @@ class WindowGeometry:
 
 @dataclass(kw_only=True)
 class Launch:
-    # key: str = "" # ショートカット
     title: str = ""
     program_path: str  # プログラムパス
     args: Optional[list[str]]  # オプション
     work_dir: Optional[str]  # 作業ディレクトリ
-    shell: bool = False  # プログラム起動にshellを追加
+    shell: Optional[bool]  # プログラム起動にshellを追加
 
 
 @dataclass(kw_only=True)
@@ -89,13 +88,14 @@ class MainWindow(tkinter.Tk):
         y = self.winfo_y()
         width = self.winfo_width()
         height = self.winfo_height()
-        #
+        # ウィンド位置の更新
         self.config_data.main_window_geometry.width = width
         self.config_data.main_window_geometry.height = height
         self.config_data.main_window_geometry.x = x
         self.config_data.main_window_geometry.y = y
         # 設定ファイル更新
         json_dic = dataclasses.asdict(self.config_data)
+        remove_none_keys(json_dic)  # Noneのキーを削除
         json_data = json.dumps(json_dic, indent=4, sort_keys=True, ensure_ascii=False)
         with open(self.config_path, mode="w", encoding="utf-8") as f:
             f.write(json_data)
@@ -118,10 +118,14 @@ class MainWindow(tkinter.Tk):
             cwd = launch.work_dir
         else:
             cwd = os.path.dirname(launch.program_path)
-        # rc = subprocess.call(cmd, shell=True)
+        #
+        if launch.shell is not None and launch.shell == True:
+            bShell = True
+        else:
+            bShell = False
         try:
-            # _process = subprocess.Popen(cmd, cwd=cwd, shell=True)
-            _process = subprocess.Popen(cmd, cwd=cwd, shell=launch.shell)
+            # rc = subprocess.call(cmd, shell=True)
+            _process = subprocess.Popen(cmd, cwd=cwd, shell=bShell)
         # except NotADirectoryError as e: # 実行パスが間違っている
         #    messagebox.showerror("エラー", f"パスが無効\nprogram_path={launch.program_path}")
         except Exception as e:
@@ -267,9 +271,9 @@ class MainWindow(tkinter.Tk):
         prefix = self.key_label["text"]
         matching_keys = [key for key in self.config_data.launch_dict.keys() if key.startswith(prefix)]
         self.update_launch_table(matching_keys)
-        if prefix in self.config_data.launch_dict: # 完全一致
+        if prefix in self.config_data.launch_dict:  # 完全一致
             self.launch_key = prefix
-        elif len(matching_keys) == 1: # 完全前方一致
+        elif len(matching_keys) == 1:  # 完全前方一致
             self.launch_key = matching_keys[0]
         #
         if self.launch_key != "":
@@ -302,6 +306,25 @@ def analyze_option(argv: List[str]) -> argparse.Namespace:
     #    sys.exit(1)
     args = parser.parse_args(argv[1:])
     return args
+
+
+def remove_none_keys(d: Union[dict, list[dict]]):
+    """!
+    @brie 辞書からNoneの値をもつキーを取り除く
+    @param[in] d 辞書または辞書のリスト
+    """
+    if isinstance(d, dict):
+        for k, v in list(d.items()):  # 削除するのでlistに変換してからループする
+            if v is None:
+                del d[k]
+            elif isinstance(v, dict):
+                remove_none_keys(v)
+    elif isinstance(d, list):
+        for item in d:
+            remove_none_keys(item)
+    else:
+        raise TypeError("引数:d")
+    return d
 
 
 def main(argv: List[str]) -> int:

@@ -1,22 +1,17 @@
 {
     "launch_dict": {
         "calc": {
-            "args": null,
             "program_path": "C:\\WINDOWS\\system32\\calc.exe",
-            "title": "電卓",
-            "work_dir": null
+            "title": "電卓"
         },
         "me": {
-            "args": null,
             "program_path": "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
-            "title": "Microsoft Excel",
-            "work_dir": null
+            "title": "Microsoft Excel"
         },
         "mf": {
-            "args": null,
             "program_path": "C:\\Windows\\explorer.exe",
-            "title": "エクスプローラ",
-            "work_dir": null
+            "shell": false,
+            "title": "エクスプローラ"
         },
         "mg": {
             "args": [
@@ -24,13 +19,11 @@
                 "start microsoft-edge:"
             ],
             "program_path": "C:\\Windows\\SysWOW64\\cmd.exe",
-            "title": "Microsoft Edge",
-            "work_dir": null
+            "title": "Microsoft Edge"
         },
         "mw": {
             "program_path": "C:\\Users\\kondou\\AppData\\Local\\Microsoft\\WindowsApps\\wt.exe",
-            "title": "Microsoft Windows Terminal",
-            "work_dir": null
+            "title": "Microsoft Windows Terminal"
         },
         "mwtu": {
             "args": [
@@ -38,8 +31,7 @@
                 "ubuntu01"
             ],
             "program_path": "C:\\Users\\kondou\\AppData\\Local\\Microsoft\\WindowsApps\\wt.exe",
-            "title": "Microsoft Windows Terminal;ubuntu01",
-            "work_dir": null
+            "title": "Microsoft Windows Terminal;ubuntu01"
         },
         "note": {
             "args": [],
@@ -48,13 +40,10 @@
             "work_dir": "C:\\"
         },
         "z1": {
-            "args": null,
             "program_path": "C:\\zzz.exe",
-            "title": "z1;program_path不正",
-            "work_dir": null
+            "title": "z1;program_path不正"
         },
         "z2": {
-            "args": null,
             "program_path": "C:\\WINDOWS\\system32\\notepad.exe",
             "title": "z2;work_dir不正",
             "work_dir": "Z:\\aa"
