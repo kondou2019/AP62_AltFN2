@@ -6,7 +6,7 @@
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/src/AltFN2.py",
-            "args": ["--config", "${workspaceFolder}/src/config.json"],
+            "args": ["--duplicate_process_check", "disable", "--config", "${workspaceFolder}/src/config.json"],
             "console": "integratedTerminal"
         }
     ]

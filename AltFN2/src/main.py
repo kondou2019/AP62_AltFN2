@@ -304,6 +304,14 @@ def analyze_option(argv: List[str]) -> argparse.Namespace:
         formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument(
+        "--duplicate_process_check",
+        action="store",
+        type=str,
+        choices=["enable", "disable"],
+        default="enable",
+        help="多重起動防止チェック。<<enable>>",
+    )
+    parser.add_argument(
         "--config",
         action="store",
         type=str,
@@ -369,11 +377,12 @@ def main(argv: List[str]) -> int:
     global g_args
     g_args = args
     # 2重起動防止
-    win32gui.EnumWindows(callback_EnumWindows_window_text_suffix, " - AltFN2")
-    if find_hwnd != 0:
-        win32gui.ShowWindow(find_hwnd, win32con.SW_NORMAL)
-        win32gui.SetForegroundWindow(find_hwnd)
-        return 0
+    if args.duplicate_process_check == "enable":
+        win32gui.EnumWindows(callback_EnumWindows_window_text_suffix, " - AltFN2")
+        if find_hwnd != 0:
+            win32gui.ShowWindow(find_hwnd, win32con.SW_NORMAL)
+            win32gui.SetForegroundWindow(find_hwnd)
+            return 0
     # ウィンドの表示
     win = MainWindow(config_path=args.config)
     win.mainloop()
