@@ -42,11 +42,14 @@ def test_convert_config():
         program_path = config.get(section, "Program")
         work_dir = None
         if "workdir" in dic:
-            work_dir = dic["workdir"]
+            s = dic["workdir"]
+            if s != "":
+                work_dir = s
         args = None
         if "programswitch" in dic:
             s = dic["programswitch"]
-            args = split_string_quotes(s)
+            if s != "":
+                args = split_string_quotes(s)
         launch = Launch(title=title, program_path=program_path, work_dir=work_dir, args=args, shell=None)
         config2.launch_dict[key] = launch
     #
