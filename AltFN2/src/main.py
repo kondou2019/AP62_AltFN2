@@ -304,12 +304,9 @@ def analyze_option(argv: List[str]) -> argparse.Namespace:
         formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument(
-        "--duplicate_process_check",
-        action="store",
-        type=str,
-        choices=["enable", "disable"],
-        default="enable",
-        help="多重起動防止チェック。<<enable>>",
+        "--disable_duplicate_process_check",
+        action='store_true',
+        help="2重起動防止チェックの無効化",
     )
     parser.add_argument(
         "--config",
@@ -356,13 +353,15 @@ def callback_EnumWindows_window_text_suffix(hwnd, title_suffix) -> bool:
     @retval True 継続
     @retval False 中断
     """
+    global find_hwnd
+    if find_hwnd != 0:
+        return True # 中断したいが落ちるので継続
     name = win32gui.GetWindowText(hwnd)
     if name.endswith(title_suffix):
-        print(f"{hwnd}:{name}")
-        global find_hwnd
+        #print(f"{hwnd}:{name}")
         find_hwnd = hwnd
-        # return False # 列挙終了。なんか落ちる
-    return True
+        #return False # 列挙終了。なんか落ちる
+    return True #  継続
 
 
 def main(argv: List[str]) -> int:
@@ -372,17 +371,17 @@ def main(argv: List[str]) -> int:
     @retval 0 成功
     @retval 1 失敗
     """
-    # オプション解析
-    args = analyze_option(argv)
-    global g_args
-    g_args = args
     # 2重起動防止
-    if args.duplicate_process_check == "enable":
+    if len(argv) >= 2 and argv[1] != "--disable_duplicate_process_check":
         win32gui.EnumWindows(callback_EnumWindows_window_text_suffix, " - AltFN2")
         if find_hwnd != 0:
             win32gui.ShowWindow(find_hwnd, win32con.SW_NORMAL)
             win32gui.SetForegroundWindow(find_hwnd)
             return 0
+    # オプション解析
+    args = analyze_option(argv)
+    global g_args
+    g_args = args
     # ウィンドの表示
     win = MainWindow(config_path=args.config)
     win.mainloop()

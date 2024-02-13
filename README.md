@@ -5,8 +5,10 @@
 ## コマンドオプション
 
 ```shell
-python AlfFN2.py [--duplicate_Process_check enable|disable] [--config 設定ファイル]
+python AlfFN2.py [--disable_duplicate_process_check] [--config 設定ファイル]
 ```
+
+--disable_duplicate_process_checkは先頭に指定してください。
 
 ## 設定ファイル
 
