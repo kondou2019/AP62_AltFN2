@@ -258,7 +258,7 @@ class MainWindow(tkinter.Tk):
     def key_event(self, e) -> None:
         if e.keysym == "BackSpace":
             self.key_label["text"] = self.key_label["text"][:-1]
-        elif e.keysym == "Escape":
+        elif e.keysym in ["Escape", "Alt_L", "Control_L", "Shift_L"]: # ショートカットキーの場合にクリアする
             self.key_label["text"] = ""
         elif e.keysym == "Return":
             if self.launch_key != "":
