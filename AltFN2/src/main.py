@@ -145,10 +145,12 @@ class MainWindow(tkinter.Tk):
             self.destroy()
         return True
 
-    def update_launch_table(self, matching_keys: list[str]):
+    def update_launch_table(self, matching_keys: Optional[list[str]] = None):
         self.launch_table.delete(*self.launch_table.get_children())  # 全削除
-        if len(matching_keys) == 0:
+        if matching_keys is None: # 全表示
             matching_keys = self.config_data.launch_dict.keys()
+        elif len(matching_keys) == 0:
+            return
         for key in matching_keys:
             launch = self.config_data.launch_dict[key]
             self.launch_table.insert(parent="", index="end", values=(key, launch.title))
@@ -218,7 +220,7 @@ class MainWindow(tkinter.Tk):
         # イベント
         self.launch_table.bind("<Double 1>", self.on_launch_table_double_click)  # マウスを左クリックしたときの動作
         # 初期描画
-        self.update_launch_table([])
+        self.update_launch_table()
         self.bind("<KeyRelease>", self.key_event)
 
     # ===================#
@@ -238,7 +240,7 @@ class MainWindow(tkinter.Tk):
 
     def on_menu_tool_reload_config_click(self) -> None:
         self.config_read()
-        self.update_launch_table([])
+        self.update_launch_table()
 
     def on_menu_tool_save_windows_click(self) -> None:
         self.config_write()
@@ -266,7 +268,7 @@ class MainWindow(tkinter.Tk):
                 self.launch_key = ""
                 self.key_label["text"] = ""
                 self.title_label["text"] = ""
-                self.update_launch_table([])
+                self.update_launch_table()
                 #
                 self.exec_program(launch)
                 #
