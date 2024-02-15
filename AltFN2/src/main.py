@@ -136,6 +136,11 @@ class MainWindow(tkinter.Tk):
         except Exception as e:
             messagebox.showerror("エラー", f"その他エラー。\n詳細:{e}")
             return False
+        # 画面クリア
+        self.launch_key = ""
+        self.key_label["text"] = ""
+        self.title_label["text"] = ""
+        self.update_launch_table()
         # アプリケーションの起動後
         if self.config_data.actions_after_launch is None or self.config_data.actions_after_launch == "minimize":
             self.iconify()  # 最小化
@@ -265,11 +270,6 @@ class MainWindow(tkinter.Tk):
         elif e.keysym == "Return":
             if self.launch_key != "":
                 launch = self.config_data.launch_dict[self.launch_key]
-                self.launch_key = ""
-                self.key_label["text"] = ""
-                self.title_label["text"] = ""
-                self.update_launch_table()
-                #
                 self.exec_program(launch)
                 #
                 return
