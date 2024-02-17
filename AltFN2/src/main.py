@@ -62,8 +62,8 @@ class MainWindow(tkinter.Tk):
         self.config_data = Config()
         self.launch_key: str = ""
         #
-        self.key_event_last_time: int = 0 # キー入力の最終時間
-        self.key_event_last_char: str = "" # キー入力の最終文字
+        self.key_event_last_time: int = 0  # キー入力の最終時間
+        self.key_event_last_char: str = ""  # キー入力の最終文字
         #
         self.config_read()
         self.MainWindow_load()
@@ -156,7 +156,7 @@ class MainWindow(tkinter.Tk):
 
     def update_launch_table(self, matching_keys: Optional[list[str]] = None):
         self.launch_table.delete(*self.launch_table.get_children())  # 全削除
-        if matching_keys is None: # 全表示
+        if matching_keys is None:  # 全表示
             matching_keys = self.config_data.launch_dict.keys()
         elif len(matching_keys) == 0:
             return
@@ -231,9 +231,9 @@ class MainWindow(tkinter.Tk):
         # 初期描画
         self.update_launch_table()
         self.bind("<KeyRelease>", self.key_event)
-        #self.bind("<KeyRelease>", self.key_event_debug)
-        #self.bind("<KeyPress>", self.key_event_debug)
-        #self.bind("<Key>", self.key_event_debug)
+        # self.bind("<KeyRelease>", self.key_event_debug)
+        # self.bind("<KeyPress>", self.key_event_debug)
+        # self.bind("<Key>", self.key_event_debug)
 
     # ===================#
     # GUIイベント(menu) #
@@ -270,18 +270,18 @@ class MainWindow(tkinter.Tk):
         self.exec_program(launch)
 
     def key_event_debug(self, e) -> None:
-        with open('debug.log', mode='a', encoding='utf-8') as f:
-            f.write(f'keysym={e.keysym},char={e.char},delta={e.delta},time={e.time}')
-            #f.write(str(e))
+        with open("debug.log", mode="a", encoding="utf-8") as f:
+            f.write(f"keysym={e.keysym},char={e.char},delta={e.delta},time={e.time}")
+            # f.write(str(e))
             f.write("\n")
-        #self.key_event(e)
+        # self.key_event(e)
 
     def key_event(self, e) -> None:
         keysym = e.keysym
         char = e.char
         # 連続したキー入力を無視
         if e.time - self.key_event_last_time < self.config_data.key_interval:
-            if self.key_event_last_char != "": # 既にキー入力がある
+            if self.key_event_last_char != "":  # 既にキー入力がある
                 char = ""
                 keysym = "BackSpace"
             else:
@@ -291,8 +291,8 @@ class MainWindow(tkinter.Tk):
         # キー入力
         if keysym == "BackSpace":
             self.key_label["text"] = self.key_label["text"][:-1]
-        elif keysym =="Escape":
-        #elif e.keysym in ["Escape", "Alt_L", "Control_L", "Shift_L"]: # ショートカットキーの場合にクリアする
+        elif keysym == "Escape":
+            # elif e.keysym in ["Escape", "Alt_L", "Control_L", "Shift_L"]: # ショートカットキーの場合にクリアする
             self.key_label["text"] = ""
         elif keysym == "Return":
             if self.launch_key != "":
@@ -334,7 +334,7 @@ def analyze_option(argv: List[str]) -> argparse.Namespace:
     )
     parser.add_argument(
         "--disable_duplicate_process_check",
-        action='store_true',
+        action="store_true",
         help="2重起動防止チェックの無効化",
     )
     parser.add_argument(
@@ -384,13 +384,43 @@ def callback_EnumWindows_window_text_suffix(hwnd, title_suffix) -> bool:
     """
     global find_hwnd
     if find_hwnd != 0:
-        return True # 中断したいが落ちるので継続
+        return True  # 中断したいが落ちるので継続
     name = win32gui.GetWindowText(hwnd)
     if name.endswith(title_suffix):
-        #print(f"{hwnd}:{name}")
+        # print(f"{hwnd}:{name}")
         find_hwnd = hwnd
-        #return False # 列挙終了。なんか落ちる
-    return True #  継続
+        # return False # 列挙終了。なんか落ちる
+    return True  #  継続
+
+
+def check_duplicate_process() -> int:
+    """!
+    @brief 2重起動防止
+    @retval 0 2重起動していない
+    @retval 1 既に起動している
+    """
+    # キャッシュファイルから探す
+    exec_dir = os.path.dirname(os.path.abspath(__file__))
+    hwnd_path = os.path.join(exec_dir, "AltFN2.hwnd")
+    if os.path.isfile(hwnd_path):
+        with open(hwnd_path, mode="r", encoding="utf-8") as f:
+            hwnd = int(f.read())
+        window_title = win32gui.GetWindowText(hwnd)
+        if window_title.endswith(" - AltFN2"):
+            win32gui.ShowWindow(hwnd, win32con.SW_NORMAL)
+            win32gui.SetForegroundWindow(hwnd)
+            return 1
+    # ウィンドウを探す
+    win32gui.EnumWindows(callback_EnumWindows_window_text_suffix, " - AltFN2")
+    if find_hwnd != 0:
+        # キャッシュファイルに保存
+        with open(hwnd_path, mode="w", encoding="utf-8") as f:
+            f.write(str(find_hwnd))
+        # ウィンドウをアクティブにする
+        win32gui.ShowWindow(find_hwnd, win32con.SW_NORMAL)
+        win32gui.SetForegroundWindow(find_hwnd)
+        return 1
+    return 0
 
 
 def main(argv: List[str]) -> int:
@@ -402,10 +432,8 @@ def main(argv: List[str]) -> int:
     """
     # 2重起動防止
     if len(argv) >= 2 and argv[1] != "--disable_duplicate_process_check":
-        win32gui.EnumWindows(callback_EnumWindows_window_text_suffix, " - AltFN2")
-        if find_hwnd != 0:
-            win32gui.ShowWindow(find_hwnd, win32con.SW_NORMAL)
-            win32gui.SetForegroundWindow(find_hwnd)
+        rc = check_duplicate_process()
+        if rc != 0:
             return 0
     # オプション解析
     args = analyze_option(argv)
