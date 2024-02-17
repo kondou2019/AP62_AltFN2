@@ -18,18 +18,19 @@ config.json
 | --- | ---- | -------------------- | --------- | ---- | -------- | ---------------------------------------- | ---- |
 | 1   | 1    | version              | str       |      |          | バージョン                               |      |
 | 2   | 1    | actions_after_launch | str       |      | minimize | アプリケーションを起動したあとの処理     |      |
-| 3   | 1    | main_window_geometry | obj       |      |          | ウィンドのサイズ・位置                   |      |
-| 4   | 2    | height               | int       |      |          | 高さ                                     |      |
-| 5   | 2    | width                | int       |      |          | 幅                                       |      |
-| 6   | 2    | x                    | int       |      |          | 座標x                                    |      |
-| 7   | 2    | y                    | int       |      |          | 座標y                                    |      |
-| 8   | 1    | launch_dict          | dict      |      |          | アプリケーション情報                     |      |
-| 9   | 2    | 辞書キー             | str       | ◯    |          | ショートカット                           |      |
-| 10  | 2    | program_path         | str       | ◯    |          | プログラムパス                           |      |
-| 11  | 2    | title                | str       | ◯    |          | タイトル                                 |      |
-| 12  | 2    | args                 | list[str] |      |          | コマンドオプション                       |      |
-| 13  | 2    | work_dir             | str       |      |          | 作業ディレクトリ                         |      |
-| 14  | 2    | shell                | bool      |      | false    | アプリケーションをシェルによって起動する |      |
+| 3   | 1    | key_interval         | int       |      | 80       | キー入力の最小間隔                       |      |
+| 4   | 1    | main_window_geometry | obj       |      |          | ウィンドのサイズ・位置                   |      |
+| 5   | 2    | height               | int       |      |          | 高さ                                     |      |
+| 6   | 2    | width                | int       |      |          | 幅                                       |      |
+| 7   | 2    | x                    | int       |      |          | 座標x                                    |      |
+| 8   | 2    | y                    | int       |      |          | 座標y                                    |      |
+| 9   | 1    | launch_dict          | dict      |      |          | アプリケーション情報                     |      |
+| 10  | 2    | 辞書キー             | str       | ◯    |          | ショートカット                           |      |
+| 11  | 2    | program_path         | str       | ◯    |          | プログラムパス                           |      |
+| 12  | 2    | title                | str       | ◯    |          | タイトル                                 |      |
+| 13  | 2    | args                 | list[str] |      |          | コマンドオプション                       |      |
+| 14  | 2    | work_dir             | str       |      |          | 作業ディレクトリ                         |      |
+| 15  | 2    | shell                | bool      |      | false    | アプリケーションをシェルによって起動する |      |
 
 actions_after_launch
 

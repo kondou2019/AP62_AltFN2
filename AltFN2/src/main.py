@@ -46,6 +46,7 @@ class Config:
     main_window_geometry: WindowGeometry = field(default_factory=WindowGeometry)
     actions_after_launch: Optional[str] = None  # アプリケーションを起動したあとの処理
     # "minimize":最小化,"exit":プログラム終了,"none":何もしない
+    key_interval: int = 80  # キー入力の最小間隔
     launch_dict: dict[str, Launch] = field(default_factory=dict)
 
 
@@ -60,6 +61,9 @@ class MainWindow(tkinter.Tk):
         self.config_path = config_path
         self.config_data = Config()
         self.launch_key: str = ""
+        #
+        self.key_event_last_time: int = 0 # キー入力の最終時間
+        self.key_event_last_char: str = "" # キー入力の最終文字
         #
         self.config_read()
         self.MainWindow_load()
@@ -227,6 +231,9 @@ class MainWindow(tkinter.Tk):
         # 初期描画
         self.update_launch_table()
         self.bind("<KeyRelease>", self.key_event)
+        #self.bind("<KeyRelease>", self.key_event_debug)
+        #self.bind("<KeyPress>", self.key_event_debug)
+        #self.bind("<Key>", self.key_event_debug)
 
     # ===================#
     # GUIイベント(menu) #
@@ -262,19 +269,42 @@ class MainWindow(tkinter.Tk):
         launch = self.config_data.launch_dict[self.launch_key]
         self.exec_program(launch)
 
+    def key_event_debug(self, e) -> None:
+        with open('debug.log', mode='a', encoding='utf-8') as f:
+            f.write(f'keysym={e.keysym},char={e.char},delta={e.delta},time={e.time}')
+            #f.write(str(e))
+            f.write("\n")
+        #self.key_event(e)
+
     def key_event(self, e) -> None:
-        if e.keysym == "BackSpace":
+        keysym = e.keysym
+        char = e.char
+        # 連続したキー入力を無視
+        if e.time - self.key_event_last_time < self.config_data.key_interval:
+            if self.key_event_last_char != "": # 既にキー入力がある
+                self.key_event_last_char = ""
+                char = ""
+                keysym = "BackSpace"
+            else:
+                return
+        self.key_event_last_time = e.time
+        self.key_event_last_char = char
+        # キー入力
+        if keysym == "BackSpace":
             self.key_label["text"] = self.key_label["text"][:-1]
-        elif e.keysym in ["Escape", "Alt_L", "Control_L", "Shift_L"]: # ショートカットキーの場合にクリアする
+        elif keysym =="Escape":
+        #elif e.keysym in ["Escape", "Alt_L", "Control_L", "Shift_L"]: # ショートカットキーの場合にクリアする
             self.key_label["text"] = ""
-        elif e.keysym == "Return":
+            self.key_event_last_char = ""
+            self.launch_key = ""
+        elif keysym == "Return":
             if self.launch_key != "":
                 launch = self.config_data.launch_dict[self.launch_key]
                 self.exec_program(launch)
+                self.key_event_last_char = ""
                 #
-                return
         elif e.char != "":  # 文字キーの入力
-            self.key_label["text"] += e.keysym
+            self.key_label["text"] += e.char
         else:  # 文字キー以外の入力は無視
             return
         #
