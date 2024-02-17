@@ -47,6 +47,8 @@ class Config:
     actions_after_launch: Optional[str] = None  # アプリケーションを起動したあとの処理
     # "minimize":最小化,"exit":プログラム終了,"none":何もしない
     key_interval: int = 80  # キー入力の最小間隔
+    font_name: str = "ＭＳ ゴシック"
+    font_size: int = 12
     launch_dict: dict[str, Launch] = field(default_factory=dict)
 
 
@@ -202,10 +204,20 @@ class MainWindow(tkinter.Tk):
         main_frm = ttk.Frame(self)
         # コントロール
         frame1 = ttk.Frame(self)
-        self.key_label = ttk.Label(frame1, text="")
-        self.title_label = ttk.Label(frame1, text="")
-        self.key_label.pack(expand=True, fill=tkinter.X)
-        self.title_label.pack(expand=True, fill=tkinter.X)
+
+        font = (self.config_data.font_name, self.config_data.font_size)
+        label0 = ttk.Label(frame1, text="key:", font=font)
+        self.key_label = ttk.Label(frame1, text="", font=font)
+        label1 = ttk.Label(frame1, text="title:", font=font)
+        self.title_label = ttk.Label(frame1, text="", font=font)
+
+        label0.grid(column=0, row=0, sticky=tkinter.E)
+        self.key_label.grid(column=1, row=0, sticky=tkinter.W)
+        label1.grid(column=0, row=1, sticky=tkinter.E)
+        self.title_label.grid(column=1, row=1, sticky=tkinter.W)
+
+        #self.key_label.pack(expand=True, fill=tkinter.X)
+        #self.title_label.pack(expand=True, fill=tkinter.X)
         frame1.pack(fill=tkinter.X)  # フレームそのものを拡張
         #
         frame2 = ttk.Frame(self)

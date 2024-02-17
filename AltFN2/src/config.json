@@ -1,4 +1,7 @@
 {
+    "font_name": "ＭＳ ゴシック",
+    "font_size": 12,
+    "key_interval": 80,
     "launch_dict": {
         "calc": {
             "program_path": "C:\\WINDOWS\\system32\\calc.exe",
