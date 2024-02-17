@@ -282,7 +282,6 @@ class MainWindow(tkinter.Tk):
         # 連続したキー入力を無視
         if e.time - self.key_event_last_time < self.config_data.key_interval:
             if self.key_event_last_char != "": # 既にキー入力がある
-                self.key_event_last_char = ""
                 char = ""
                 keysym = "BackSpace"
             else:
@@ -295,13 +294,10 @@ class MainWindow(tkinter.Tk):
         elif keysym =="Escape":
         #elif e.keysym in ["Escape", "Alt_L", "Control_L", "Shift_L"]: # ショートカットキーの場合にクリアする
             self.key_label["text"] = ""
-            self.key_event_last_char = ""
-            self.launch_key = ""
         elif keysym == "Return":
             if self.launch_key != "":
                 launch = self.config_data.launch_dict[self.launch_key]
                 self.exec_program(launch)
-                self.key_event_last_char = ""
                 #
         elif e.char != "":  # 文字キーの入力
             self.key_label["text"] += e.char
@@ -309,6 +305,7 @@ class MainWindow(tkinter.Tk):
             return
         #
         self.title_label["text"] = ""
+        self.launch_key = ""
         prefix = self.key_label["text"]
         matching_keys = [key for key in self.config_data.launch_dict.keys() if key.startswith(prefix)]
         self.update_launch_table(matching_keys)
