@@ -17,7 +17,7 @@ import win32gui
 from dacite import from_dict
 
 # グローバル変数
-__version__ = "0.2.255"
+__version__ = "0.3.0"
 g_args = argparse.Namespace()  # コマンド引数。ダミー初期化
 
 #
