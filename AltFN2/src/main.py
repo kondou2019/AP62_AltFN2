@@ -64,7 +64,8 @@ class MainWindow(tkinter.Tk):
         self.config_data = Config()
         self.launch_key: str = ""
         #
-        self.key_event_last_time: int = 0  # キー入力の最終時間
+        self.key_event_modifier_last_time: int = 0  # 修飾キーの最終入力時刻
+        self.key_event_character_last_time: int = 0  # 文字キーの最終入力時刻
         self.key_event_last_char: str = ""  # キー入力の最終文字
         #
         self.config_read()
@@ -291,14 +292,19 @@ class MainWindow(tkinter.Tk):
     def key_event(self, e) -> None:
         keysym = e.keysym
         char = e.char
-        # 連続したキー入力を無視
-        if e.time - self.key_event_last_time < self.config_data.key_interval:
-            if self.key_event_last_char != "":  # 既にキー入力がある
-                char = ""
-                keysym = "BackSpace"
-            else:
+        # ショートカットキーの入力による誤入力を防ぐ
+        if e.char != "":  # 文字キーの入力?
+            self.key_event_character_last_time = e.time
+            if e.time - self.key_event_modifier_last_time < self.config_data.key_interval:
                 return
-        self.key_event_last_time = e.time
+        else: # 修飾キーの入力
+            self.key_event_modifier_last_time = e.time
+            if e.time - self.key_event_character_last_time < self.config_data.key_interval:
+                if self.key_event_last_char != "": # 既に文字を入力している?
+                    char = ""
+                    keysym = "BackSpace"
+                else:
+                    return
         self.key_event_last_char = char
         # キー入力
         if keysym == "BackSpace":
