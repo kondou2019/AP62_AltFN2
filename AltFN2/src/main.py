@@ -208,7 +208,7 @@ class MainWindow(tkinter.Tk):
 
         font = (self.config_data.font_name, self.config_data.font_size)
         label0 = ttk.Label(frame1, text="key:", font=font)
-        self.key_label = ttk.Label(frame1, text="", font=font)
+        self.key_label = ttk.Label(frame1, text="", font=(self.config_data.font_name, self.config_data.font_size, "bold"))
         label1 = ttk.Label(frame1, text="title:", font=font)
         self.title_label = ttk.Label(frame1, text="", font=font)
 
@@ -328,12 +328,16 @@ class MainWindow(tkinter.Tk):
         self.title_label["text"] = ""
         self.launch_key = ""
         prefix = self.key_label["text"]
+        self.key_label.config(foreground="black")
+        #
         matching_keys = [key for key in self.config_data.launch_dict.keys() if key.startswith(prefix)]
         self.update_launch_table(matching_keys)
         if prefix in self.config_data.launch_dict:  # 完全一致
             self.launch_key = prefix
         elif len(matching_keys) == 1:  # 完全前方一致
             self.launch_key = matching_keys[0]
+        else:
+            self.key_label.config(foreground="red")
         #
         if self.launch_key != "":
             launch = self.config_data.launch_dict[self.launch_key]
