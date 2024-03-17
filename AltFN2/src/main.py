@@ -4,6 +4,8 @@
 
 import argparse
 import dataclasses
+from datetime import datetime
+from datetime import timedelta
 import json
 import os
 import subprocess
@@ -46,7 +48,7 @@ class Config:
     main_window_geometry: WindowGeometry = field(default_factory=WindowGeometry)
     actions_after_launch: Optional[str] = None  # アプリケーションを起動したあとの処理
     # "minimize":最小化,"exit":プログラム終了,"none":何もしない
-    key_interval: int = 80  # キー入力の最小間隔
+    active_key_interval: int = 300  # ウィンドウがアクティブになってから一定時間キー入力を無視する
     font_name: str = "ＭＳ ゴシック"
     font_size: int = 12
     launch_dict: dict[str, Launch] = field(default_factory=dict)
@@ -67,6 +69,7 @@ class MainWindow(tkinter.Tk):
         self.key_event_modifier_last_time: int = 0  # 修飾キーの最終入力時刻
         self.key_event_character_last_time: int = 0  # 文字キーの最終入力時刻
         self.key_event_last_char: str = ""  # キー入力の最終文字
+        self.visiblility_time: datetime = datetime.now() # ウィンドウの表示時刻
         #
         self.config_read()
         self.MainWindow_load()
@@ -241,6 +244,7 @@ class MainWindow(tkinter.Tk):
         self.scrollbar_launch_table.pack(side=tkinter.RIGHT, fill=tkinter.Y)
         # イベント
         self.launch_table.bind("<Double 1>", self.on_launch_table_double_click)  # マウスを左クリックしたときの動作
+        self.bind('<Visibility>', self.on_visibility)
         # 初期描画
         self.update_launch_table()
         self.bind("<KeyRelease>", self.key_event)
@@ -282,6 +286,11 @@ class MainWindow(tkinter.Tk):
         launch = self.config_data.launch_dict[self.launch_key]
         self.exec_program(launch)
 
+    def on_visibility(self, e) -> None:
+        if e.widget == self:
+            print("visible")
+        pass
+
     def key_event_debug(self, e) -> None:
         with open("debug.log", mode="a", encoding="utf-8") as f:
             f.write(f"keysym={e.keysym},char={e.char},delta={e.delta},time={e.time}")
@@ -291,21 +300,10 @@ class MainWindow(tkinter.Tk):
 
     def key_event(self, e) -> None:
         keysym = e.keysym
-        char = e.char
         # ショートカットキーの入力による誤入力を防ぐ
-        if e.char != "":  # 文字キーの入力?
-            self.key_event_character_last_time = e.time
-            if e.time - self.key_event_modifier_last_time < self.config_data.key_interval:
-                return
-        else: # 修飾キーの入力
-            self.key_event_modifier_last_time = e.time
-            if e.time - self.key_event_character_last_time < self.config_data.key_interval:
-                if self.key_event_last_char != "": # 既に文字を入力している?
-                    char = ""
-                    keysym = "BackSpace"
-                else:
-                    return
-        self.key_event_last_char = char
+        # ウィンドウが表示されてから一定時間が経過していない場合は無視
+        if (datetime.now() - self.visiblility_time) < timedelta(milliseconds=self.config_data.active_key_interval):
+            return
         # キー入力
         if keysym == "BackSpace":
             self.key_label["text"] = self.key_label["text"][:-1]

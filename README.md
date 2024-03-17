@@ -29,9 +29,9 @@ config.json
 | --- | ---- | -------------------- | ---- | ---- | ------------- | ------------------------------------ | ---- |
 | 1   | 1    | version              | str  |      |               | バージョン                           |      |
 | 2   | 1    | actions_after_launch | str  |      | minimize      | アプリケーションを起動したあとの処理 |      |
-| 3   | 1    | key_interval         | int  |      | 80            | キー入力の最小間隔                   |      |
-| 4   | 1    | font_name            | str  |      | ＭＳ ゴシック | キー入力の最小間隔                   |      |
-| 5   | 1    | font_size            | int  |      | 12            | キー入力の最小間隔                   |      |
+| 3   | 1    | active_key_interval  | int  |      | 300           | ウィンドウがアクティブになってから一定時間キー入力を無視する |      |
+| 4   | 1    | font_name            | str  |      | ＭＳ ゴシック | 表示フォント名                           |      |
+| 5   | 1    | font_size            | int  |      | 12            | 表示フォントサイズ                       |      |
 | 6   | 1    | main_window_geometry | obj       |      |          | ウィンドのサイズ・位置                   |      |
 | 7   | 2    | height               | int       |      |          | 高さ                                     |      |
 | 8   | 2    | width                | int       |      |          | 幅                                       |      |
