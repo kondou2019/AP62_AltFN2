@@ -316,6 +316,8 @@ class MainWindow(tkinter.Tk):
             if self.launch_key != "":
                 launch = self.config_data.launch_dict[self.launch_key]
                 self.exec_program(launch)
+            elif self.key_label["text"] != "": # 途中まで入力している場合
+                pass
             else: # キーが無い場合。
                 self.iconify()  # 最小化
         elif e.char != "":  # 文字キーの入力
