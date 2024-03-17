@@ -196,6 +196,7 @@ class MainWindow(tkinter.Tk):
         menu_tool.add_separator()
         menu_tool.add_command(label="ウィンドサイズと位置を保存", command=self.on_menu_tool_save_windows_click)
         menu_tool.add_separator()
+        menu_tool.add_command(label="設定ファイルを開く", command=self.on_menu_tool_open_config_click)
         menu_tool.add_command(label="設定ファイルの再読み込み", command=self.on_menu_tool_reload_config_click)
         menu.add_cascade(label="ツール", menu=menu_tool)
 
@@ -266,6 +267,9 @@ class MainWindow(tkinter.Tk):
         escaped_string = json.dumps(s, ensure_ascii=False)
         self.clipboard_clear()
         self.clipboard_append(escaped_string)
+
+    def on_menu_tool_open_config_click(self) -> None:
+        subprocess.Popen(["notepad", self.config_path])
 
     def on_menu_tool_reload_config_click(self) -> None:
         self.config_read()
