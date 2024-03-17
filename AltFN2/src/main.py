@@ -291,9 +291,8 @@ class MainWindow(tkinter.Tk):
         self.exec_program(launch)
 
     def on_visibility(self, e) -> None:
-        if e.widget == self:
-            print("visible")
-        pass
+        if e.widget == self: # メインウィンド?
+            self.visiblility_time: datetime = datetime.now()
 
     def key_event_debug(self, e) -> None:
         with open("debug.log", mode="a", encoding="utf-8") as f:
