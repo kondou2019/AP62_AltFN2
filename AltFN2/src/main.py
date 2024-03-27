@@ -8,6 +8,7 @@ from datetime import datetime
 from datetime import timedelta
 import json
 import os
+import re
 import subprocess
 import tkinter
 from dataclasses import dataclass, field
@@ -56,7 +57,7 @@ class Config:
 
 class MainWindow(tkinter.Tk):
     """!
-    @brie メインウィンド
+    @brief メインウィンド
     """
 
     def __init__(self, *, config_path: str = ""):
@@ -118,21 +119,23 @@ class MainWindow(tkinter.Tk):
     def exec_program(self, launch: Launch) -> bool:
         cmd: list[str] = []
         #
-        if os.path.isfile(launch.program_path) == False:
-            messagebox.showerror("エラー", f"ファイルが見つかりません。\nprogram_path={launch.program_path}")
+        program_path = replace_env(launch.program_path)
+        if os.path.isfile(program_path) == False:
+            messagebox.showerror("エラー", f"ファイルが見つかりません。\nprogram_path={program_path}")
             return False
-        cmd.append(launch.program_path)
+        cmd.append(program_path)
         if launch.args is not None:
-            cmd.extend(launch.args)
+            for arg in launch.args:
+                cmd.append(replace_env(arg))
         #
-        # cwd = os.path.basename(launch.program_path)
         if launch.work_dir is not None:
-            if os.path.isdir(launch.work_dir) == False:
-                messagebox.showerror("エラー", f"ディレクトリが見つかりません。\nwork_dir={launch.work_dir}")
+            work_dir = replace_env(launch.work_dir)
+            if os.path.isdir(work_dir) == False:
+                messagebox.showerror("エラー", f"ディレクトリが見つかりません。\nwork_dir={work_dir}")
                 return False
-            cwd = launch.work_dir
+            cwd = work_dir
         else:
-            cwd = os.path.dirname(launch.program_path)
+            cwd = os.path.dirname(program_path)
         #
         if launch.shell is not None and launch.shell == True:
             bShell = True
@@ -142,7 +145,7 @@ class MainWindow(tkinter.Tk):
             # rc = subprocess.call(cmd, shell=True)
             _process = subprocess.Popen(cmd, cwd=cwd, shell=bShell)
         # except NotADirectoryError as e: # 実行パスが間違っている
-        #    messagebox.showerror("エラー", f"パスが無効\nprogram_path={launch.program_path}")
+        #    messagebox.showerror("エラー", f"パスが無効\nprogram_path={program_path}")
         except Exception as e:
             messagebox.showerror("エラー", f"その他エラー。\n詳細:{e}")
             return False
@@ -388,7 +391,7 @@ def analyze_option(argv: List[str]) -> argparse.Namespace:
 
 def remove_none_keys(d: Union[dict, list[dict]]):
     """!
-    @brie 辞書からNoneの値をもつキーを取り除く
+    @brief 辞書からNoneの値をもつキーを取り除く
     @param[in] d 辞書または辞書のリスト
     """
     if isinstance(d, dict):
@@ -403,6 +406,22 @@ def remove_none_keys(d: Union[dict, list[dict]]):
     else:
         raise TypeError("引数:d")
     return d
+
+
+def replace_env(s: str) -> str:
+    """!
+    @brief 環境変数を置換する
+    @param[in] s 置換元文字列
+    @return 置換後文字列
+    @detail 置換対象は%ENV%形式。環境変数が存在しない場合は置換しない。
+    """
+    matches = re.findall(r"%([^%]+)%", s)
+    for match in matches:
+        value = os.environ.get(match)
+        if value is not None:
+            s = s.replace(f"%{match}%", value)
+    return s
+
 
 
 find_hwnd: int = 0

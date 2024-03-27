@@ -4,15 +4,15 @@
     "key_interval": 80,
     "launch_dict": {
         "calc": {
-            "program_path": "C:\\WINDOWS\\system32\\calc.exe",
+            "program_path": "%SystemRoot%\\system32\\calc.exe",
             "title": "電卓"
         },
         "me": {
-            "program_path": "C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
+            "program_path": "%ProgramFiles%\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
             "title": "Microsoft Excel"
         },
         "mf": {
-            "program_path": "C:\\Windows\\explorer.exe",
+            "program_path": "%SystemRoot%\\explorer.exe",
             "shell": false,
             "title": "エクスプローラ"
         },
@@ -24,8 +24,16 @@
             "program_path": "C:\\Windows\\SysWOW64\\cmd.exe",
             "title": "Microsoft Edge"
         },
+        "mp": {
+            "program_path": "%LOCALAPPDATA%\\Microsoft\\WindowsApps\\mspaint.exe",
+            "title": "ﾍﾟｲﾝﾄ"
+        },
+        "mp2": {
+            "program_path": "C:\\Users\\kondou\\AppData\\Local\\Microsoft\\WindowsApps\\mspaint.exe",
+            "title": "ﾍﾟｲﾝﾄ"
+        },
         "mw": {
-            "program_path": "C:\\Users\\kondou\\AppData\\Local\\Microsoft\\WindowsApps\\wt.exe",
+            "program_path": "%LOCALAPPDATA%\\Microsoft\\WindowsApps\\wt.exe",
             "title": "Microsoft Windows Terminal"
         },
         "mwtu": {
@@ -33,7 +41,7 @@
                 "-p",
                 "ubuntu01"
             ],
-            "program_path": "C:\\Users\\kondou\\AppData\\Local\\Microsoft\\WindowsApps\\wt.exe",
+            "program_path": "%LOCALAPPDATA%\\Microsoft\\WindowsApps\\wt.exe",
             "title": "Microsoft Windows Terminal;ubuntu01"
         },
         "note": {
@@ -47,7 +55,7 @@
             "title": "z1;program_path不正"
         },
         "z2": {
-            "program_path": "C:\\WINDOWS\\system32\\notepad.exe",
+            "program_path": "%SystemRoot%\\system32\\notepad.exe",
             "title": "z2;work_dir不正",
             "work_dir": "Z:\\aa"
         }

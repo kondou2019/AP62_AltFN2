@@ -1,10 +1,11 @@
 import configparser
 import dataclasses
 import json
+import os
 
 import pytest
 
-from src.main import Config, Launch, remove_none_keys
+from src.main import Config, Launch, remove_none_keys, replace_env
 
 
 def split_string_quotes(s: str) -> list[str]:
@@ -75,3 +76,23 @@ def test_convert_config():
 def test_split_string_quotes_0001X(test_id: str, val: str, expected: list[str]):
     result = split_string_quotes(val)
     assert result == expected
+
+def test_sreplace_env_0101N(monkeypatch):
+    monkeypatch.setenv('LOCALAPPDATA', 'kondou')
+    result = replace_env("a%LOCALAPPDATA%b")
+    assert result == "akondoub"
+
+def test_sreplace_env_0102N(monkeypatch):
+    monkeypatch.setenv('LOCALAPPDATA', 'kondou')
+    result = replace_env("a%LOCALAPPDATA%b%LOCALAPPDATA%c")
+    assert result == "akondoubkondouc"
+
+def test_sreplace_env_0103A(monkeypatch):
+    result = replace_env("a%NOENV%b")
+    assert result == "a%NOENV%b"
+
+
+def test_sreplace_env_0201B(monkeypatch):
+    monkeypatch.setenv('LOCALAPPDATA', 'kondou')
+    result = replace_env("ab")
+    assert result == "ab"
