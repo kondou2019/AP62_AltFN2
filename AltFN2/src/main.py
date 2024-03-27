@@ -193,6 +193,9 @@ class MainWindow(tkinter.Tk):
         menu_tool.add_command(
             label="クリップボードの文字列をJSON文字列に更新", command=self.on_menu_tool_clipboard_json_click
         )
+        menu_tool.add_command(
+            label="クリップボードの文字列のパス区切り文字を'/'に置換", command=self.on_menu_tool_clipboard_path_separate_click
+        )
         menu_tool.add_separator()
         menu_tool.add_command(label="ウィンドサイズと位置を保存", command=self.on_menu_tool_save_windows_click)
         menu_tool.add_separator()
@@ -267,6 +270,12 @@ class MainWindow(tkinter.Tk):
         escaped_string = json.dumps(s, ensure_ascii=False)
         self.clipboard_clear()
         self.clipboard_append(escaped_string)
+
+    def on_menu_tool_clipboard_path_separate_click(self) -> None:
+        s = self.clipboard_get()
+        slashed_string = s.replace("\\", "/")
+        self.clipboard_clear()
+        self.clipboard_append(slashed_string)
 
     def on_menu_tool_open_config_click(self) -> None:
         subprocess.Popen(["notepad", self.config_path])
