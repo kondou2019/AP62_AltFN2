@@ -2,7 +2,17 @@
     "font_name": "ＭＳ ゴシック",
     "font_size": 12,
     "key_interval": 80,
+    "variable_list": [
+        {
+            "name": "KondouTl",
+            "value": "C:/kondou.tl"
+        }
+    ],
     "launch_dict": {
+        "a5m2": {
+            "program_path": "%KondouTl%/a5m2/A5M2.exe",
+            "title": "A5:SQL Mk-2(SQL,ER図ツール)"
+        },
         "calc": {
             "program_path": "%SystemRoot%\\system32\\calc.exe",
             "title": "電卓"

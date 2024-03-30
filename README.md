@@ -37,7 +37,10 @@ config.json
 | 8   | 2    | width                | int       |      |          | 幅                                       |      |
 | 9   | 2    | x                    | int       |      |          | 座標x                                    |      |
 | 10   | 2    | y                    | int       |      |          | 座標y                                    |      |
-| 11   | 1    | launch_dict          | dict      |      |          | アプリケーション情報                     |      |
+| 11  | 1    | variable_list        | list[obj] |      |          | 設定変数                                 |      |
+| 12  | 2    | name                 | str       |      |          | 変数の名称                               |      |
+| 13  | 2    | value                | str       |      |          | 変数の値                                 |      |
+| 14  | 1    | launch_dict          | dict      |      |          | アプリケーション情報                     |      |
 
 actions_after_launch
 

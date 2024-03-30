@@ -44,6 +44,12 @@ class Launch:
 
 
 @dataclass(kw_only=True)
+class Variable:
+    name: str = ""
+    value: str = ""
+
+
+@dataclass(kw_only=True)
 class Config:
     version: str = ""
     main_window_geometry: WindowGeometry = field(default_factory=WindowGeometry)
@@ -52,6 +58,7 @@ class Config:
     active_key_interval: int = 300  # ウィンドウがアクティブになってから一定時間キー入力を無視する
     font_name: str = "ＭＳ ゴシック"
     font_size: int = 12
+    variable_list: list[Variable] = field(default_factory=list)
     launch_dict: dict[str, Launch] = field(default_factory=dict)
 
 
@@ -119,17 +126,17 @@ class MainWindow(tkinter.Tk):
     def exec_program(self, launch: Launch) -> bool:
         cmd: list[str] = []
         #
-        program_path = replace_env(launch.program_path)
+        program_path = self.replace_variable(launch.program_path)
         if os.path.isfile(program_path) == False:
             messagebox.showerror("エラー", f"ファイルが見つかりません。\nprogram_path={program_path}")
             return False
         cmd.append(program_path)
         if launch.args is not None:
             for arg in launch.args:
-                cmd.append(replace_env(arg))
+                cmd.append(self.replace_variable(arg))
         #
         if launch.work_dir is not None:
-            work_dir = replace_env(launch.work_dir)
+            work_dir = self.replace_variable(launch.work_dir)
             if os.path.isdir(work_dir) == False:
                 messagebox.showerror("エラー", f"ディレクトリが見つかりません。\nwork_dir={work_dir}")
                 return False
@@ -162,6 +169,22 @@ class MainWindow(tkinter.Tk):
         elif self.config_data.actions_after_launch == "exit":
             self.destroy()
         return True
+
+    def replace_variable(self, s: str) -> str:
+        """!
+        @brief 変数を置換する。設定変数と環境変数
+        @param[in] s 置換元文字列
+        @return 置換後文字列
+        @detail 置換対象は%ENV%形式。環境変数が存在しない場合は置換しない。
+        """
+        matches = re.findall(r"%([^%]+)%", s)
+        for match in matches:
+            value = next((x.value for x in self.config_data.variable_list if x.name == match), None)
+            if value is None:# 環境変数なし?
+                value = os.environ.get(match)  # 環境変数
+            if value is not None:
+                s = s.replace(f"%{match}%", value)
+        return s
 
     def update_launch_table(self, matching_keys: Optional[list[str]] = None):
         self.launch_table.delete(*self.launch_table.get_children())  # 全削除
