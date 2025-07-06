@@ -32,15 +32,16 @@ config.json
 | 3   | 1    | active_key_interval  | int  |      | 300           | ウィンドウがアクティブになってから一定時間キー入力を無視する |      |
 | 4   | 1    | font_name            | str  |      | ＭＳ ゴシック | 表示フォント名                           |      |
 | 5   | 1    | font_size            | int  |      | 12            | 表示フォントサイズ                       |      |
-| 6   | 1    | main_window_geometry | obj       |      |          | ウィンドのサイズ・位置                   |      |
-| 7   | 2    | height               | int       |      |          | 高さ                                     |      |
-| 8   | 2    | width                | int       |      |          | 幅                                       |      |
-| 9   | 2    | x                    | int       |      |          | 座標x                                    |      |
-| 10   | 2    | y                    | int       |      |          | 座標y                                    |      |
-| 11  | 1    | variable_list        | list[obj] |      |          | 設定変数                                 |      |
-| 12  | 2    | name                 | str       |      |          | 変数の名称                               |      |
-| 13  | 2    | value                | str       |      |          | 変数の値                                 |      |
-| 14  | 1    | launch_dict          | dict      |      |          | アプリケーション情報                     |      |
+| 6   | 1    | hotkey               | str  |      |               | ホットキー(ショートカットキー)文字列     | ctrl+alt+q |
+| 7   | 1    | main_window_geometry | obj       |      |          | ウィンドのサイズ・位置                   |      |
+| 8   | 2    | height               | int       |      |          | 高さ                                     |      |
+| 9   | 2    | width                | int       |      |          | 幅                                       |      |
+| 10   | 2    | x                    | int       |      |          | 座標x                                    |      |
+| 11   | 2    | y                    | int       |      |          | 座標y                                    |      |
+| 12  | 1    | variable_list        | list[obj] |      |          | 設定変数                                 |      |
+| 13  | 2    | name                 | str       |      |          | 変数の名称                               |      |
+| 14  | 2    | value                | str       |      |          | 変数の値                                 |      |
+| 15  | 1    | launch_dict          | dict      |      |          | アプリケーション情報                     |      |
 
 actions_after_launch
 
