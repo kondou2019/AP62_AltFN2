@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python main.py",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/AltFN2.py",
+            "args": ["--config", "${workspaceFolder}/src/config.json"],
+            "console": "integratedTerminal"
+        }
+    ]
+}
