@@ -14,6 +14,7 @@ import tkinter
 from dataclasses import dataclass, field
 from tkinter import messagebox, ttk
 from typing import List, Optional, Union
+import keyboard
 
 import win32con
 import win32gui
@@ -58,6 +59,7 @@ class Config:
     active_key_interval: int = 300  # ウィンドウがアクティブになってから一定時間キー入力を無視する
     font_name: str = "ＭＳ ゴシック"
     font_size: int = 12
+    hotkey: str ="" # ショートカットキー
     variable_list: list[Variable] = field(default_factory=list)
     launch_dict: dict[str, Launch] = field(default_factory=dict)
 
@@ -81,6 +83,9 @@ class MainWindow(tkinter.Tk):
         #
         self.config_read()
         self.MainWindow_load()
+        # ショートカットキーを登録
+        if self.config_data.hotkey != "":
+            keyboard.add_hotkey(self.config_data.hotkey, self.show_window)
 
     # ====================#
     # 外部インタフェース #
@@ -185,6 +190,9 @@ class MainWindow(tkinter.Tk):
             if value is not None:
                 s = s.replace(f"%{match}%", value)
         return s
+
+    def show_window(self):
+        check_duplicate_process()
 
     def update_launch_table(self, matching_keys: Optional[list[str]] = None):
         self.launch_table.delete(*self.launch_table.get_children())  # 全削除

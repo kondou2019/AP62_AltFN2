@@ -1,6 +1,7 @@
 {
     "font_name": "ＭＳ ゴシック",
     "font_size": 12,
+    "hotkey": "ctrl+alt+q",
     "key_interval": 80,
     "variable_list": [
         {
