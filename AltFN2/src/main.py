@@ -85,7 +85,7 @@ class MainWindow(tkinter.Tk):
         self.MainWindow_load()
         # ショートカットキーを登録
         if self.config_data.hotkey != "":
-            keyboard.add_hotkey(self.config_data.hotkey, self.show_window)
+            keyboard.add_hotkey(self.config_data.hotkey, self.show_window,)
 
     # ====================#
     # 外部インタフェース #
@@ -237,6 +237,11 @@ class MainWindow(tkinter.Tk):
         menu_tool.add_command(label="設定ファイルの再読み込み", command=self.on_menu_tool_reload_config_click)
         menu.add_cascade(label="ツール", menu=menu_tool)
 
+        menu_debug = tkinter.Menu(menu, tearoff=0)
+        menu_debug.add_command(label="debug1", command=self.on_menu_debug_debug1_click)
+        menu_debug.add_command(label="debug2", command=self.on_menu_debug_debug2_click)
+        menu.add_cascade(label="デバッグ", menu=menu_debug)
+
         menu_help = tkinter.Menu(menu, tearoff=0)
         menu_help.add_command(label="バージョン情報...", command=self.on_menu_help_about_click)
         menu.add_cascade(label="ヘルプ", menu=menu_help)
@@ -293,6 +298,12 @@ class MainWindow(tkinter.Tk):
     # ===================#
     # GUIイベント(menu) #
     # ===================#
+    def on_menu_debug_debug1_click(self) -> None:
+        pass
+
+    def on_menu_debug_debug2_click(self) -> None:
+        pass
+
     def on_menu_file_exit_click(self) -> None:
         self.destroy()
 
