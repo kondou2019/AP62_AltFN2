@@ -238,7 +238,7 @@ class MainWindow(tkinter.Tk):
         menu.add_cascade(label="ツール", menu=menu_tool)
 
         menu_debug = tkinter.Menu(menu, tearoff=0)
-        menu_debug.add_command(label="debug1", command=self.on_menu_debug_debug1_click)
+        menu_debug.add_command(label="hotkeyの再登録", command=self.on_menu_debug_debug1_click)
         menu_debug.add_command(label="debug2", command=self.on_menu_debug_debug2_click)
         menu.add_cascade(label="デバッグ", menu=menu_debug)
 
@@ -300,6 +300,9 @@ class MainWindow(tkinter.Tk):
     # ===================#
     def on_menu_debug_debug1_click(self) -> None:
         pass
+        if self.config_data.hotkey != "":
+            keyboard.remove_hotkey(self.config_data.hotkey)
+            keyboard.add_hotkey(self.config_data.hotkey, self.show_window,)
 
     def on_menu_debug_debug2_click(self) -> None:
         pass
