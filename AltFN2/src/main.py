@@ -15,7 +15,7 @@ import tkinter
 from dataclasses import dataclass, field
 from tkinter import messagebox, ttk
 from typing import List, Optional, Union
-import keyboard
+import threading
 
 import win32con
 import win32gui
@@ -25,8 +25,9 @@ from dacite import from_dict
 __version__ = "0.5.255"
 g_args = argparse.Namespace()  # コマンド引数。ダミー初期化
 
-#
-
+# ホットキーのID (ユニークである必要があります)
+HOTKEY_ID = 1
+VK_Q = 0x51
 
 @dataclass(kw_only=True)
 class WindowGeometry:
@@ -59,7 +60,7 @@ class Config:
     active_key_interval: int = 300  # ウィンドウがアクティブになってから一定時間キー入力を無視する
     font_name: str = "ＭＳ ゴシック"
     font_size: int = 12
-    hotkey: str ="" # ショートカットキー
+    hotkey: bool = True # ショートカットキー
     variable_list: list[Variable] = field(default_factory=list)
     launch_dict: dict[str, Launch] = field(default_factory=dict)
 
@@ -84,8 +85,13 @@ class MainWindow(tkinter.Tk):
         self.config_read()
         self.MainWindow_load()
         # ショートカットキーを登録
-        if self.config_data.hotkey != "":
-            keyboard.add_hotkey(self.config_data.hotkey, self.show_window,)
+        if self.config_data.hotkey == True:
+            # ウィンドウが閉じられるときのプロトコルを設定
+            self.protocol("WM_DELETE_WINDOW", self.on_closing)
+            # ホットキーリスナーを別スレッドで開始
+            self.hotkey_thread = threading.Thread(target=self.hotkey_listener)
+            self.hotkey_thread.daemon = True # メインスレッド終了時にスレッドも終了
+            self.hotkey_thread.start()
 
     # ====================#
     # 外部インタフェース #
@@ -209,6 +215,54 @@ class MainWindow(tkinter.Tk):
             launch = self.config_data.launch_dict[key]
             self.launch_table.insert(parent="", index="end", values=(key, launch.title))
 
+    def hotkey_listener(self):
+        logger = getLogger("altfn2")
+        # ダミーウィンドウを作成し、ホットキーを登録
+        # ホットキーイベントはこのスレッドで受信される
+        message_map = {
+            win32con.WM_HOTKEY: self.on_hotkey
+        }
+
+        # メッセージを受信するダミーウィンドウを作成
+        wc = win32gui.WNDCLASS()
+        wc.lpfnWndProc = message_map
+        wc.lpszClassName = "HotkeyListenerWindow"
+        try:
+            hinst = win32gui.GetModuleHandle(None)
+            classAtom = win32gui.RegisterClass(wc)
+            hwnd = win32gui.CreateWindow(classAtom, "Hotkey Listener", 0, 0, 0, 0, 0, 0, 0, hinst, None)
+        except Exception as e:
+            logger.error(f"Error creating dummy window: {e}")
+            return
+
+        # Ctrl+Alt+Q を登録
+        # MOD_CONTROL | MOD_ALT は Ctrl+Alt
+        # Q は 'Q' の仮想キーコード (0x51)
+        try:
+            if not win32gui.RegisterHotKey(hwnd, HOTKEY_ID, win32con.MOD_CONTROL | win32con.MOD_ALT, VK_Q):
+                logger.error("Failed to register hotkey")
+        except Exception as e:
+            logger.error(f"Error registering hotkey: {e}")
+            return
+
+        logger.info("Hotkey Ctrl+Alt+Q registered.")
+
+        # メッセージループを実行
+        win32gui.PumpMessages()
+
+        # ここに到達した場合（UnregisterHotKeyが呼ばれた場合など）
+        logger.info("Hotkey listener thread exiting.")
+
+
+    def on_hotkey(self, hwnd, msg, wparam, lparam):
+        if wparam == HOTKEY_ID:
+            logger = getLogger("altfn2")
+            logger.debug(f"Hotkey pressed!")
+
+            # ウィンド表示
+            self.show_window()
+        return 0 # メッセージを処理したことを示す
+
     # ===================#
     # GUIイベント,Window #
     # ===================#
@@ -250,7 +304,7 @@ class MainWindow(tkinter.Tk):
         menu.add_cascade(label="ツール", menu=menu_tool)
 
         menu_debug = tkinter.Menu(menu, tearoff=0)
-        menu_debug.add_command(label="hotkeyの再登録", command=self.on_menu_debug_debug1_click)
+        menu_debug.add_command(label="debug1", command=self.on_menu_debug_debug1_click)
         menu_debug.add_command(label="debug2", command=self.on_menu_debug_debug2_click)
         menu.add_cascade(label="デバッグ", menu=menu_debug)
 
@@ -307,14 +361,23 @@ class MainWindow(tkinter.Tk):
         # self.bind("<KeyPress>", self.key_event_debug)
         # self.bind("<Key>", self.key_event_debug)
 
+    # =====================#
+    # GUIイベント,ウィンド #
+    # =====================#
+    def on_closing(self):
+        logger = getLogger("altfn2")
+        # アプリケーション終了時にホットキーを解除
+        try:
+            win32gui.UnregisterHotKey(None, HOTKEY_ID)
+        except Exception as e:
+            logger.error(f"Error unregistering hotkey: {e}")
+        self.destroy()
+
     # ===================#
     # GUIイベント(menu) #
     # ===================#
     def on_menu_debug_debug1_click(self) -> None:
         pass
-        if self.config_data.hotkey != "":
-            keyboard.remove_hotkey(self.config_data.hotkey)
-            keyboard.add_hotkey(self.config_data.hotkey, self.show_window,)
 
     def on_menu_debug_debug2_click(self) -> None:
         pass

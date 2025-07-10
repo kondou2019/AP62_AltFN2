@@ -32,7 +32,7 @@ config.json
 | 3   | 1    | active_key_interval  | int  |      | 300           | ウィンドウがアクティブになってから一定時間キー入力を無視する |      |
 | 4   | 1    | font_name            | str  |      | ＭＳ ゴシック | 表示フォント名                           |      |
 | 5   | 1    | font_size            | int  |      | 12            | 表示フォントサイズ                       |      |
-| 6   | 1    | hotkey               | str  |      |               | ホットキー(ショートカットキー)文字列     | ctrl+alt+q |
+| 6   | 1    | hotkey               | bool |      |               | ホットキーの有無                         |      |
 | 7   | 1    | main_window_geometry | obj       |      |          | ウィンドのサイズ・位置                   |      |
 | 8   | 2    | height               | int       |      |          | 高さ                                     |      |
 | 9   | 2    | width                | int       |      |          | 幅                                       |      |
