@@ -7,6 +7,7 @@ import dataclasses
 from datetime import datetime
 from datetime import timedelta
 import json
+from logging import getLogger, config
 import os
 import re
 import subprocess
@@ -48,7 +49,6 @@ class Launch:
 class Variable:
     name: str = ""
     value: str = ""
-
 
 @dataclass(kw_only=True)
 class Config:
@@ -161,6 +161,9 @@ class MainWindow(tkinter.Tk):
         except Exception as e:
             messagebox.showerror("エラー", f"その他エラー。\n詳細:{e}")
             return False
+        ## ログ:開始したプログラム
+        logger = getLogger("altfn2")
+        logger.info(f"exec_program():cmd={' '.join(cmd)}")
         # 画面クリア
         self.launch_key = ""
         self.key_label["text"] = ""
@@ -192,6 +195,8 @@ class MainWindow(tkinter.Tk):
         return s
 
     def show_window(self):
+        logger = getLogger("altfn2")
+        logger.debug("show_window():")
         check_duplicate_process()
 
     def update_launch_table(self, matching_keys: Optional[list[str]] = None):
@@ -232,6 +237,13 @@ class MainWindow(tkinter.Tk):
         )
         menu_tool.add_separator()
         menu_tool.add_command(label="ウィンドサイズと位置を保存", command=self.on_menu_tool_save_windows_click)
+        menu_tool.add_separator()
+
+        menu_tool_log = tkinter.Menu(menu, tearoff=0)
+        menu_tool_log.add_command(label="ログを開く", command=self.on_menu_tool_log_open_log_click)
+        menu_tool_log.add_command(label="ログの設定ファイルを開く", command=self.on_menu_tool_log_open_config_click)
+        menu_tool.add_cascade(label="ログ", menu=menu_tool_log)
+
         menu_tool.add_separator()
         menu_tool.add_command(label="設定ファイルを開く", command=self.on_menu_tool_open_config_click)
         menu_tool.add_command(label="設定ファイルの再読み込み", command=self.on_menu_tool_reload_config_click)
@@ -324,6 +336,12 @@ class MainWindow(tkinter.Tk):
         slashed_string = s.replace("\\", "/")
         self.clipboard_clear()
         self.clipboard_append(slashed_string)
+
+    def on_menu_tool_log_open_config_click(self) -> None:
+        subprocess.Popen(["notepad", "log_config.json"])
+
+    def on_menu_tool_log_open_log_click(self) -> None:
+        subprocess.Popen(["notepad", os.path.join('log', 'altfn2.log')])
 
     def on_menu_tool_open_config_click(self) -> None:
         subprocess.Popen(["notepad", self.config_path])
@@ -538,6 +556,13 @@ def main(argv: List[str]) -> int:
     args = analyze_option(argv)
     global g_args
     g_args = args
+    # ロギング設定
+    with open('log_config.json', 'r') as f:
+        log_conf = json.load(f)
+    config.dictConfig(log_conf)
+    ## 開始ログ
+    logger = getLogger("altfn2")
+    logger.info("start")
     # ウィンドの表示
     win = MainWindow(config_path=args.config)
     win.mainloop()

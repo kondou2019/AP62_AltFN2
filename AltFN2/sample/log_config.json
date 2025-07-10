@@ -1,0 +1,49 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "console_formatter": {
+            "format": "%(asctime)s %(levelname)s %(message)s"
+        },
+        "simple": {
+            "format": "%(asctime)s %(name)s:%(lineno)s %(funcName)s [%(levelname)s]: %(message)s"
+        }
+    },
+
+    "handlers": {
+        "consoleHandler": {
+            "class": "logging.StreamHandler",
+            "level": "INFO",
+            "formatter": "console_formatter",
+            "stream": "ext://sys.stdout"
+        },
+        "fileHandler": {
+            "class": "logging.FileHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+            "filename": "log/altfn2.log"
+        }
+    },
+
+    "loggers": {
+        "altfn2": {
+            "level": "DEBUG",
+            "handlers": ["fileHandler"],
+            "propagate": false
+        },
+        "same_hierarchy": {
+            "level": "DEBUG",
+            "handlers": ["consoleHandler", "fileHandler"],
+            "propagate": false
+        },
+        "lower.sub": {
+            "level": "DEBUG",
+            "handlers": ["consoleHandler", "fileHandler"],
+            "propagate": false
+        }
+    },
+
+    "root": {
+        "level": "INFO"
+    }
+}
